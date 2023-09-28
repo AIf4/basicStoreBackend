@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateProductDto, UpdateProductDto } from '../dto/product.dto';
 import { Model } from 'mongoose';
@@ -6,28 +6,55 @@ import { Product } from '../schemas/product.schema';
 
 @Injectable()
 export class ProductsService {
-
-  constructor(
-    @InjectModel(Product.name) private producModel: Model<Product>
-  ){}
+  constructor(@InjectModel(Product.name) private producModel: Model<Product>) {}
 
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    const createdProduct = new this.producModel(createProductDto);
+    return createdProduct.save();
   }
 
   async findAll() {
-    return await this.producModel.find().populate('tag').lean();
+    return await this.producModel
+      .find({ delete: false })
+      .populate('tags')
+      .lean();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findAllByParams(params: string) {
+    const regex = new RegExp(params, 'i');
+    return await this.producModel
+      .find({ name: { $regex: regex }, delete: false })
+      .populate('tags')
+      .lean();
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async findAllByPriceRange(min: number, max: number) {
+    return await this.producModel
+      .find({ price: { $gte: min, $lte: max }, delete: false })
+      .populate('tags')
+      .lean();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async findOne(_id: number) {
+    return await this.producModel.findById({ _id: _id, delete: false });
+  }
+
+  async update(_id: number, updateProductDto: UpdateProductDto) {
+    const productFind = await this.producModel.findById(_id);
+    if (!productFind) new NotFoundException('Producto no encontrado!');
+    return await this.producModel.findByIdAndUpdate(
+      { _id },
+      { updateProductDto },
+    );
+  }
+
+  async remove(_id: string) {
+    const productFind = await this.producModel.findById(_id);
+    console.log(productFind);
+    if (!productFind) new NotFoundException('Producto no encontrado!');
+    return await this.producModel.findByIdAndUpdate(
+      { _id: _id },
+      { delete: true },
+    );
   }
 }

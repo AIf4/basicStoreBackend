@@ -1,10 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto, UpdateProductDto } from '../dto/product.dto';
 import { ApiTags } from '@nestjs/swagger';
 
-
-@ApiTags("products")
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -19,6 +27,16 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('/by-params/:params')
+  findAllByParams(@Param('params') params: string) {
+    return this.productsService.findAllByParams(params);
+  }
+
+  @Get('/by-price-range/:min/:max')
+  findAllByPriceRange(@Param('min') min: number, @Param('max') max: number) {
+    return this.productsService.findAllByPriceRange(min, max);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
@@ -31,6 +49,7 @@ export class ProductsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+    console.log(id);
+    return this.productsService.remove(id);
   }
 }

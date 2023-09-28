@@ -10,9 +10,8 @@ import { MongooseModule } from '@nestjs/mongoose';
     MongooseModule.forRoot('mongodb://localhost:27017/rocketfy-db'),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
     }),
-    ProductsModule
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

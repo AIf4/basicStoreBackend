@@ -8,7 +8,7 @@ export class Product extends Document {
   name: string;
 
   @Prop()
-  description: number;
+  description: string;
 
   @Prop()
   sku: string;
@@ -17,10 +17,13 @@ export class Product extends Document {
   imageurl: string;
 
   @Prop()
-  precio: string;
+  price: number;
 
   @Prop()
-  stock: string;
+  stock: number;
+
+  @Prop({ default: false })
+  delete: boolean;
 
   @Prop({
     type: [

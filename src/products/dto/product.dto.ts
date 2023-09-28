@@ -1,29 +1,28 @@
-import { PartialType } from "@nestjs/swagger";
-import { IsArray, IsString } from "class-validator";
+import { PartialType } from '@nestjs/swagger';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
-    @IsString()
-    name: string;
+  @IsString()
+  name: string;
 
-    @IsString()
-    description: number;
-  
-    @IsString()
-    sku: string;
-  
-    @IsString()
-    imageurl: string;
-  
-    @IsString()
-    precio: string;
-  
-    @IsString()
-    stock: number;
+  @IsString()
+  description: string;
 
-    @IsArray()
-    tags: [];
+  @IsString()
+  sku: string;
+
+  @IsString()
+  imageurl: string;
+
+  @IsNumber()
+  price: number;
+
+  @IsNumber()
+  stock: number;
+
+  @IsOptional()
+  @IsArray()
+  tags: string[];
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
-
-
