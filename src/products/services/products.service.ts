@@ -39,19 +39,20 @@ export class ProductsService {
     return await this.producModel.findById({ _id: _id, delete: false });
   }
 
-  async update(_id: number, updateProductDto: UpdateProductDto) {
+  async update(_id: string, updateProductDto: UpdateProductDto) {
     const productFind = await this.producModel.findById(_id);
-    if (!productFind) new NotFoundException('Producto no encontrado!');
-    return await this.producModel.findByIdAndUpdate(
+    if (!productFind) throw new NotFoundException('Producto no encontrado!');
+    console.log(_id, updateProductDto);
+    const result = await this.producModel.updateOne(
       { _id },
-      { updateProductDto },
+      { ...updateProductDto },
     );
+    return result;
   }
 
   async remove(_id: string) {
     const productFind = await this.producModel.findById(_id);
-    console.log(productFind);
-    if (!productFind) new NotFoundException('Producto no encontrado!');
+    if (!productFind) throw new NotFoundException('Producto no encontrado!');
     return await this.producModel.findByIdAndUpdate(
       { _id: _id },
       { delete: true },
